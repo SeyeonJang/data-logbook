@@ -31,3 +31,49 @@ WHERE DT
     BETWEEN '2021-08-02' AND '2021-08-09'
 GROUP BY DT
 ORDER BY DT;
+
+/* 문제4 - 우리 플랫폼에 정착한 판매자 2
+  https://solvesql.com/problems/settled-sellers-2/
+  주문당 금액이 50이 넘는 판매 건수가 100건이 넘는 판매자를 찾는 문제 ,, where과 having을 동시에 써야하는 게 헷갈렸다. 시간을 많이 썼다.
+*/
+SELECT
+    SELLER_ID,
+    COUNT(DISTINCT ORDER_ID) as orders
+FROM
+    OLIST_ORDER_ITEMS_DATASET
+WHERE
+    PRICE >= 50
+GROUP BY
+    SELLER_ID
+HAVING
+    COUNT(DISTINCT ORDER_ID) >= 100
+ORDER BY orders DESC;
+
+/* 문제5 - 레스토랑의 일일 매출
+  https://solvesql.com/problems/daily-revenue/
+*/
+SELECT
+    DAY,
+    SUM(TOTAL_BILL) as 'revenue_daily'
+FROM TIPS
+GROUP BY DAY
+HAVING revenue_daily >= 1000
+ORDER BY revenue_daily DESC;
+
+/* 문제6 - 버뮤다 삼각지대에 들어가버린 택배
+  https://solvesql.com/problems/shipment-in-bermuda/
+  DATE 함수를 SELECT절에 쓰고 alias로 Group by에서도 함께 쓸 수 있었는데 이걸 인지하지 못해서 틀렸다. DATE 빼고는 잘 작동했다.
+*/
+SELECT
+    DATE(ORDER_DELIVERED_CARRIER_DATE) as delivered_carrier_date,
+    COUNT(DISTINCT ORDER_ID) as orders
+FROM
+    OLIST_ORDERS_DATASET
+WHERE
+    ORDER_DELIVERED_CUSTOMER_DATE is NULL
+  AND
+    delivered_carrier_date like '2017-01%'
+GROUP BY
+    delivered_carrier_date
+ORDER BY
+    delivered_carrier_date;
