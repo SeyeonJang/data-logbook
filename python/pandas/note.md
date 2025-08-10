@@ -25,3 +25,26 @@ def createDataframe(student_data: List[List[int]]) -> pd.DataFrame:
 | `df.loc[row_list, col_list]` | 여러 행과 열 선택    |
 | `df.loc[조건식]`                | 조건 필터링        |
 | `df.loc[:, 'col']`           | 모든 행의 특정 열 선택 |
+
+### 4️⃣ 제거
+`df.dropna()`: null 값 포함되면 해당 행 제거
+- `subset = ['컬럼명'])` : 서브셋에 있는 열이 null값이면 해당 행 제거 
+
+
+`drop_duplicates()` : 중복된 행을 제거하는 메서드
+- `subset` : **중복을 확인할 특정 컬럼을 지정**
+  - None : 모든 컬럼을 기준으로 중복 확인
+  - 단일 컬럼 : subset=['column_name']
+  - 여러 컬럼 : subset=['col1', 'col2', 'col3']
+- `keep`
+  - 'first' : 첫 번째 중복 행을 유지, 나머지 제거
+  - 'last' : 마지막 중복 행을 유지, 나머지 제거
+  - False : 모든 중복 행을 제거 (중복된 모든 행이 삭제됨)
+- `inplace`
+  - False : 새로운 DataFrame 반환 (원본 유지)
+  - True : 원본 DataFrame을 직접 수정
+- `ignore_index` 
+  - False: 기존 인덱스 유지
+  - True: 새로운 연속적인 인덱스로 재설정
+
+### 5️⃣ 
