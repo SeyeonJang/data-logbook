@@ -77,3 +77,47 @@ GROUP BY
     delivered_carrier_date
 ORDER BY
     delivered_carrier_date;
+
+/* 문제7 - 쇼핑몰의 일일 매출액
+  https://solvesql.com/problems/olist-daily-revenue/
+*/
+SELECT
+    DATE(d.ORDER_PURCHASE_TIMESTAMP) as dt,
+    ROUND(SUM(p.PAYMENT_VALUE),2) as revenue_daily
+FROM OLIST_ORDERS_DATASET d
+    JOIN OLIST_ORDER_PAYMENTS_DATASET p ON d.ORDER_ID = p.ORDER_ID
+WHERE dt >= '2018-01-01'
+GROUP BY dt
+ORDER BY dt;
+
+/* 문제8 - 점검이 필요한 자전거 찾기
+  https://solvesql.com/problems/inspection-needed-bike/
+*/
+SELECT
+    BIKE_ID
+FROM RENTAL_HISTORY
+WHERE RENT_AT >= '2021-01' and RETURN_AT < '2021-02'
+GROUP BY BIKE_ID
+HAVING SUM(DISTANCE) >= 50000;
+
+/* 문제9 - 레스토랑의 대목
+  https://solvesql.com/problems/high-season-of-restaurant/
+*/
+SELECT
+    *
+FROM TIPS
+WHERE DAY in (
+    SELECT
+        DAY
+    FROM TIPS
+    GROUP BY DAY
+    HAVING SUM(TOTAL_BILL) >= 1500
+);
+
+/* 문제10 - 레스토랑의 요일별 VIP
+  https://solvesql.com/problems/restaurant-vip/
+*/
+SELECT *
+FROM TIPS
+GROUP BY DAY
+HAVING MAX(TOTAL_BILL);
