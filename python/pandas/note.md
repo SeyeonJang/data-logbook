@@ -30,7 +30,6 @@ def createDataframe(student_data: List[List[int]]) -> pd.DataFrame:
 `df.dropna()`: null 값 포함되면 해당 행 제거
 - `subset = ['컬럼명'])` : 서브셋에 있는 열이 null값이면 해당 행 제거 
 
-
 `drop_duplicates()` : 중복된 행을 제거하는 메서드
 - `subset` : **중복을 확인할 특정 컬럼을 지정**
   - None : 모든 컬럼을 기준으로 중복 확인
@@ -47,4 +46,13 @@ def createDataframe(student_data: List[List[int]]) -> pd.DataFrame:
   - False: 기존 인덱스 유지
   - True: 새로운 연속적인 인덱스로 재설정
 
-### 5️⃣ 
+### 5️⃣ 변경
+
+`.rename()`
+- 컬럼명 변경 : `데이터.rename(columns={"A": "a"})`
+
+`.astype()`
+- 타입 변경 : `데이터['컬럼명'].astype(형태)`
+
+`.fillna()`
+- null인곳 0으로 채우기 : `데이터['컬럼명'].fillna(0)`
