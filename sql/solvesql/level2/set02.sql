@@ -65,4 +65,23 @@ FROM artworks;
 
 /* 문제16 - 최대값을 가진 행 찾기
   https://solvesql.com/problems/max-row/
+  WITH 2개 써야하나 했는데 쉽게 where절에서 or로 풀 수 있었다! 다시 풀어보기 위해 다른 분의 답 한 번 보고 다른 날에 다시 처음부터 풀어서 맞췄다.
 */
+SELECT
+    id
+FROM points
+WHERE x = (SELECT MAX(x) FROM points) or y = (SELECT MAX(y) FROM points)
+ORDER BY id;
+
+/* 문제17 - 3년간 들어온 소장품 집계하기
+  https://solvesql.com/problems/summary-of-artworks-in-3-years/
+  case when 써서 조건 판별하는 게 어려웠다 ... 이건 나중에 다시 풀어봐야겠다.
+*/
+SELECT
+    classification,
+    COUNT(CASE WHEN STRFTIME('%Y', acquisition_date) = '2014' THEN 1 END) AS '2014',
+    COUNT(CASE WHEN STRFTIME('%Y', acquisition_date) = '2015' THEN 1 END) AS '2015',
+    COUNT(CASE WHEN STRFTIME('%Y', acquisition_date) = '2016' THEN 1 END) AS '2016'
+FROM artworks
+GROUP BY 1
+ORDER BY 1;
