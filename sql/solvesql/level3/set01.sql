@@ -31,3 +31,30 @@ FROM
     olist_order_payments_dataset
 WHERE payment_type = 'credit_card'
 GROUP BY payment_installments;
+
+/* 문제3 - 지역별 주문의 특징
+  https://solvesql.com/problems/characteristics-of-orders/
+   컬럼별로 나와야하는 숫자가 달라서 DISTINCT를 걸어줘야겠다고 고민했는데 어디에 넣을 지 몰라서 헤맸던.. COUNT() 안에 CASE문에 DISTINCT를 걸어주면 된다.
+*/
+SELECT
+    region as 'Region',
+    COUNT(DISTINCT(CASE WHEN category = 'Furniture' THEN order_id END)) AS 'Furniture',
+    COUNT(DISTINCT(CASE WHEN category = 'Office Supplies' THEN order_id END)) AS 'Office Supplies',
+    COUNT(DISTINCT(CASE WHEN category = 'Technology' THEN order_id END)) AS 'Technology'
+FROM records
+WHERE country = 'United States'
+GROUP BY 1
+ORDER BY 1;
+
+/* 문제4 - 배송 예정일 예측 성공과 실패
+  https://solvesql.com/problems/estimated-delivery-date/
+*/
+SELECT
+    STRFTIME('%Y-%m-%d', order_purchase_timestamp) as 'purchase_date',
+    COUNT(DISTINCT(CASE WHEN order_estimated_delivery_date >= order_delivered_customer_date THEN order_id END)) as 'success',
+    COUNT(DISTINCT(CASE WHEN order_estimated_delivery_date < order_delivered_customer_date THEN order_id END)) as 'fail'
+FROM
+    olist_orders_dataset
+WHERE order_purchase_timestamp >= '2017-01' and order_purchase_timestamp < '2017-02'
+GROUP BY 1
+ORDER BY 1;
