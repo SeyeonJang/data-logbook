@@ -58,3 +58,18 @@ FROM
 WHERE order_purchase_timestamp >= '2017-01' and order_purchase_timestamp < '2017-02'
 GROUP BY 1
 ORDER BY 1;
+
+/* 문제5 - 배송 예정일 예측 성공과 실패
+  https://solvesql.com/problems/daily-arppu/
+   ARPPU는 기본이라 잘 하고 싶었다 !
+*/
+SELECT
+    DATE(o.order_purchase_timestamp) AS dt,
+    COUNT(distinct o.customer_id) AS pu,
+    ROUND(SUM(p.payment_value),2) AS revenue_daily,
+    ROUND(SUM(p.payment_value)/COUNT(distinct o.customer_id),2) AS arppu
+FROM olist_orders_dataset o
+INNER JOIN olist_order_payments_dataset p
+ON o.order_id = p.order_id
+WHERE dt >= '2018-01-01'
+GROUP BY 1
