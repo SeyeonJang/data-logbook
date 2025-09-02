@@ -72,4 +72,29 @@ FROM olist_orders_dataset o
 INNER JOIN olist_order_payments_dataset p
 ON o.order_id = p.order_id
 WHERE dt >= '2018-01-01'
-GROUP BY 1
+GROUP BY 1;
+
+/* 문제6 - 멘토링 짝꿍 리스트
+  https://solvesql.com/problems/mentor-mentee-list/
+*/
+SELECT
+    e.employee_id as mentee_id,
+    e.name as mentee_name,
+    m.employee_id as mentor_id,
+    m.name as mentor_name
+FROM employees e, employees m
+WHERE e.department != m.department
+  AND e.join_date >= '2021-10-31' and e.join_date <= '2021-12-31'
+  AND m.join_date <= '2019-12-31'
+ORDER BY 1,3;
+
+/* 문제7 - 작품이 없는 작가 찾기
+  https://solvesql.com/problems/artists-without-artworks/
+*/
+SELECT
+    a.artist_id,
+    a.name
+FROM artists a
+LEFT JOIN artworks_artists z ON a.artist_id = z.artist_id
+WHERE z.artist_id is NULL
+  AND a.death_year is NOT NULL;
