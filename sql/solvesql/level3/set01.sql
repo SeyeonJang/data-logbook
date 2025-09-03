@@ -98,3 +98,15 @@ FROM artists a
 LEFT JOIN artworks_artists z ON a.artist_id = z.artist_id
 WHERE z.artist_id is NULL
   AND a.death_year is NOT NULL;
+
+/* 문제8 - 온라인 쇼핑몰의 월 별 매출액 집계
+  https://solvesql.com/problems/shoppingmall-monthly-summary/
+*/
+SELECT
+    STRFTIME('%Y-%m', a.order_date) as order_month,
+    SUM(CASE WHEN b.order_id not like 'C%' THEN b.price*b.quantity END) as ordered_amount,
+    SUM(CASE WHEN b.order_id like 'C%' THEN b.price*b.quantity END) as canceled_amount,
+    SUM(b.price*b.quantity) as total_amount
+FROM orders a
+JOIN order_items b ON a.order_id = b.order_id
+GROUP BY 1;
