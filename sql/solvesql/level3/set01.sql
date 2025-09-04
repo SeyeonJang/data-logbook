@@ -110,3 +110,60 @@ SELECT
 FROM orders a
 JOIN order_items b ON a.order_id = b.order_id
 GROUP BY 1;
+
+/* 문제9 - 게임 평점 예측하기 1
+  https://solvesql.com/problems/predict-game-scores-1/
+   진짜 역대급 문제 ... 너무 어려웠다 CASE 쓰는 게 어려운 게 아니라 머리 쓰는 과정이 너무나도 어려웠고, CASE문이 너무 길어져서 이게 맞나..했다
+   다른 방법도 같이 남겨놓고 블로그 올리면서 다시 공부!
+*/
+SELECT
+    game_id,
+    name,
+    CASE WHEN critic_score IS NULL
+         THEN (SELECT ROUND(AVG(critic_score), 3) FROM games WHERE genre_id = a.genre_id)
+         ELSE critic_score
+        END critic_score,
+    CASE WHEN critic_count IS NULL
+         THEN (SELECT CEIL(AVG(critic_count)) FROM games WHERE genre_id = a.genre_id)
+         ELSE critic_count
+        END critic_count,
+    CASE WHEN user_score IS NULL
+         THEN (SELECT ROUND(AVG(user_score), 3) FROM games WHERE genre_id = a.genre_id)
+         ELSE user_score
+        END user_score,
+    CASE WHEN user_count IS NULL
+         THEN (SELECT CEIL(AVG(user_count)) FROM games WHERE genre_id = a.genre_id)
+         ELSE user_count
+        END user_count
+FROM games a
+WHERE
+    year >= 2015
+  AND (critic_score IS NULL OR user_score IS NULL);
+
+/* 다른 분이 올린 코드 */
+WITH genre_avg AS (
+    SELECT
+        genre_id,
+        ROUND(AVG(critic_score), 3) AS avg_critic_score,
+        CEIL(AVG(critic_count))     AS avg_critic_count,
+        ROUND(AVG(user_score), 3)   AS avg_user_score,
+        CEIL(AVG(user_count))       AS avg_user_count
+    FROM
+        games
+    GROUP BY
+        genre_id
+)
+SELECT
+    g.game_id,
+    g.name,
+    COALESCE(g.critic_score, ga.avg_critic_score) AS critic_score,
+    COALESCE(g.critic_count, ga.avg_critic_count) AS critic_count,
+    COALESCE(g.user_score,   ga.avg_user_score)   AS user_score,
+    COALESCE(g.user_count,   ga.avg_user_count)   AS user_count
+FROM
+    games g
+        LEFT JOIN
+    genre_avg ga ON g.genre_id = ga.genre_id
+WHERE
+    g.year >= 2015
+  AND (g.critic_score IS NULL OR g.user_score IS NULL);
