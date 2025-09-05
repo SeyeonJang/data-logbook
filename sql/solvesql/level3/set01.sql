@@ -167,3 +167,36 @@ FROM
 WHERE
     g.year >= 2015
   AND (g.critic_score IS NULL OR g.user_score IS NULL);
+
+/* 문제10 - 서울숲 요일별 대기오염도 계산하기
+  https://solvesql.com/problems/weekday-stats-airpollution/
+   처음에 0에 월요일부터 넣어서 틀렸고, order by에 weekday 말고 STRFTIME() 넣어서 틀렸음 !
+*/
+SELECT
+    CASE STRFTIME('%w', measured_at)
+        WHEN '0' THEN '일요일'
+        WHEN '1' THEN '월요일'
+        WHEN '2' THEN '화요일'
+        WHEN '3' THEN '수요일'
+        WHEN '4' THEN '목요일'
+        WHEN '5' THEN '금요일'
+        WHEN '6' THEN '토요일'
+    END as weekday,
+    ROUND(AVG(no2),4) as no2,
+    ROUND(AVG(o3),4) as o3,
+    ROUND(AVG(co),4) as co,
+    ROUND(AVG(so2),4) as so2,
+    ROUND(AVG(pm10),4) as pm10,
+    ROUND(AVG(pm2_5),4) as pm2_5
+FROM measurements
+GROUP BY STRFTIME('%w', measured_at)
+ORDER BY
+    CASE weekday
+        WHEN '월요일' THEN 1
+        WHEN '화요일' THEN 2
+        WHEN '수요일' THEN 3
+        WHEN '목요일' THEN 4
+        WHEN '금요일' THEN 5
+        WHEN '토요일' THEN 6
+        WHEN '일요일' THEN 7
+    END
