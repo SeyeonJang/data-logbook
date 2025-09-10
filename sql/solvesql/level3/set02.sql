@@ -59,3 +59,28 @@ WHERE
     u.usage_2018 > 0
   AND u.usage_2019 > 0
   AND u.usage_2019 <= u.usage_2018 * 0.5;
+
+/* 문제12 - 멀티 플랫폼 게임 찾기
+  https://solvesql.com/problems/multiplatform-games/
+   CASE 문법으로 플랫폼을 나누고 HAVING 절에서 COUNT 하는 것 !! (CASE 에서 IN을 안 써봐서 조금 어려웠다 ..!! where절처럼 조건 쓰면 되는 것!)
+*/
+
+WITH plat AS (
+    SELECT
+        name,
+        platform_id,
+        CASE
+            WHEN name IN ('PS3', 'PS4', 'PSP', 'PSV') THEN 'Sony'
+            WHEN name IN ('Wii', 'WiiU', 'DS', '3DS') THEN 'Nintendo'
+            WHEN name IN ('X360', 'XONE') THEN 'Microsoft'
+            END AS company
+    FROM platforms
+)
+
+SELECT
+    DISTINCT g.name
+FROM games g
+JOIN plat p ON g.platform_id = p.platform_id
+WHERE g.year >= 2012
+GROUP BY g.name
+HAVING COUNT(DISTINCT p.company) >= 2
