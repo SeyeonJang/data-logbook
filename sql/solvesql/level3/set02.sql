@@ -84,3 +84,18 @@ JOIN plat p ON g.platform_id = p.platform_id
 WHERE g.year >= 2012
 GROUP BY g.name
 HAVING COUNT(DISTINCT p.company) >= 2
+
+/* 문제13 - 전국 카페 주소 데이터 정제하기
+  https://solvesql.com/problems/refine-cafe-address/
+*/
+SELECT
+    SUBSTR(address, 1, INSTR(address,' ')-1) sido,
+    SUBSTR(
+            address,
+            INSTR(address,' ')+1,
+            INSTR(SUBSTR(address, instr(address, ' ')+1),' ')-1
+    ) sigungu,
+    COUNT(DISTINCT cafe_id) cnt
+FROM cafes
+GROUP BY 1, 2
+ORDER BY 3 desc
